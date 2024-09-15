@@ -81,7 +81,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("https://analiaromannutricionista.netlify.app");  // Permitir el frontend en Angular
+        configuration.addAllowedOrigin("http://localhost:4200");  // Permitir el frontend en Angular
         configuration.addAllowedMethod("*");  // Permitir todos los métodos HTTP
         configuration.addAllowedHeader("*");  // Permitir todos los encabezados
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
