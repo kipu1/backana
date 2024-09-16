@@ -105,6 +105,7 @@ public class CursoController {
             cursoConDetalles.put("descripcion", curso.getDescripcion());
             cursoConDetalles.put("precio", curso.getPrecio());
             cursoConDetalles.put("fileUrl", curso.getFileUrl());
+            cursoConDetalles.put("password", curso.getPassword());
             cursoConDetalles.put("telefonoUsuario", curso.getTelefonoUsuario()); // Obtener el teléfono del usuario
             respuesta.add(cursoConDetalles);
         }
