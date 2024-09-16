@@ -43,4 +43,8 @@ public class CursoService {
         Curso curso = obtenerCursoPorId(id);
         return curso != null && curso.getPassword().equals(password);
     }
+    public List<Curso> obtenerCursosPorUsuario(Usuario usuario) {
+        return cursoRepository.findByUsuario(usuario);
+    }
+
 }

@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.http.HttpHeaders;
@@ -86,10 +88,30 @@ public class CursoController {
 
     // Listar Cursos
     @GetMapping("/listar")
-    public ResponseEntity<List<Curso>> listarCursos() {
-        List<Curso> cursos = cursoService.obtenerCursos();
-        return ResponseEntity.ok(cursos);
+    public ResponseEntity<List<Map<String, Object>>> listarCursos(Authentication authentication) {
+        // Obtener el correo del usuario autenticado
+        String correoUsuario = authentication.getName();
+        Usuario usuario = usuarioRepository.findByCorreo(correoUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        List<Curso> cursos = cursoService.obtenerCursosPorUsuario(usuario);
+
+        // Crear una lista de mapas para agregar los detalles de cada curso junto con el teléfono del usuario
+        List<Map<String, Object>> respuesta = new ArrayList<>();
+        for (Curso curso : cursos) {
+            Map<String, Object> cursoConDetalles = new HashMap<>();
+            cursoConDetalles.put("id", curso.getId());  // Incluir el ID del curso
+            cursoConDetalles.put("nombre", curso.getNombre());
+            cursoConDetalles.put("descripcion", curso.getDescripcion());
+            cursoConDetalles.put("precio", curso.getPrecio());
+            cursoConDetalles.put("fileUrl", curso.getFileUrl());
+            cursoConDetalles.put("telefonoUsuario", curso.getTelefonoUsuario()); // Obtener el teléfono del usuario
+            respuesta.add(cursoConDetalles);
+        }
+
+        return ResponseEntity.ok(respuesta);
     }
+
 
 
     // Descargar Curso con Contraseña

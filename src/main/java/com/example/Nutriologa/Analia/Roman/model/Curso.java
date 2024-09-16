@@ -38,7 +38,9 @@ public class Curso {
         this.fileUrl = fileUrl;
         this.usuario = usuario;
     }
-
+    public String getTelefonoUsuario() {
+        return usuario != null ? usuario.getTelefono() : null;
+    }
     public String getPassword() {
         return password;
     }
