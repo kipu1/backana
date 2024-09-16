@@ -47,6 +47,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // Asegurarse de que CORS está activado
                 .csrf(csrf -> csrf.disable())  // Deshabilitar CSRF
                 .authorizeHttpRequests(auth -> auth
                         // Rutas abiertas al público
@@ -64,11 +65,11 @@ public class SecurityConfig {
                                 "/api/usuarios/registro",
                                 "/archivos/**"  // Permitir acceso público a los archivos PDF
                         ).permitAll()
-                        .requestMatchers( "/api/cursos/subir-archivo",
-
-                                "/api/usuarios/perfil",
-                               "/api/citas/historia",  "/api/cursos/crear", "/api/citas/obtener","/api/cursos/actualizar/**","/api/cursos/actualizar/{id}","/api/servicios/actualizar/{id}","/api/servicios/actualizar/**").authenticated() // Exigir autenticación para crear cursos y subir archivos
-                        // Cualquier otra solicitud requiere autenticación
+                        .requestMatchers("/api/cursos/subir-archivo", "/api/usuarios/perfil",
+                                "/api/citas/historia",  "/api/cursos/crear", "/api/citas/obtener",
+                                "/api/cursos/actualizar/**", "/api/cursos/actualizar/{id}",
+                                "/api/servicios/actualizar/{id}", "/api/servicios/actualizar/**")
+                        .authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -84,10 +85,12 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:4200");  // Permitir el frontend en Angular
         configuration.addAllowedMethod("*");  // Permitir todos los métodos HTTP
         configuration.addAllowedHeader("*");  // Permitir todos los encabezados
+        configuration.setAllowCredentials(true);  // Permitir el envío de credenciales como tokens o cookies
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 
 
     @Bean
