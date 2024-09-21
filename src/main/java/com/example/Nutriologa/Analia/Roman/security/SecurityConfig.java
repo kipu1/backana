@@ -3,6 +3,7 @@ package com.example.Nutriologa.Analia.Roman.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,6 +51,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))  // Asegurarse de que CORS está activado
                 .csrf(csrf -> csrf.disable())  // Deshabilitar CSRF
                 .authorizeHttpRequests(auth -> auth
+                        // Permitir todas las solicitudes OPTIONS para preinspección (CORS)
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()  // Asegúrate de permitir las preflight requests
                         // Rutas abiertas al público
                         .requestMatchers(
                                 "/api/usuarios/login",
@@ -65,6 +68,7 @@ public class SecurityConfig {
                                 "/api/usuarios/registro",
                                 "/archivos/**"  // Permitir acceso público a los archivos PDF
                         ).permitAll()
+                        // Rutas que requieren autenticación
                         .requestMatchers("/api/cursos/subir-archivo", "/api/usuarios/perfil",
                                 "/api/citas/historia",  "/api/cursos/crear", "/api/citas/obtener",
                                 "/api/cursos/actualizar/**", "/api/cursos/actualizar/{id}",
@@ -74,8 +78,7 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))  // Política sin estado para JWT
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                // Añadir filtro de JWT
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)  // Añadir filtro de JWT
                 .build();
     }
 
@@ -86,8 +89,8 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("https://analiaromannutricionista.netlify.app"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setExposedHeaders(List.of("Authorization")); // Exponer los encabezados requeridos, como 'Authorization'
-        configuration.setAllowCredentials(true); // Permitir el envío de credenciales
+        configuration.setExposedHeaders(List.of("Authorization"));  // Permitir que el frontend acceda a ciertos encabezados en la respuesta
+        configuration.setAllowCredentials(true);  // Permitir el envío de credenciales como tokens
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
