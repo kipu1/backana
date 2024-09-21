@@ -85,13 +85,14 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("https://analiaromannutricionista.netlify.app"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setExposedHeaders(List.of("Authorization"));  // Permitir que el frontend acceda a ciertos encabezados en la respuesta
-        configuration.setAllowCredentials(true);  // Permitir el envío de credenciales como tokens
+        configuration.setAllowedHeaders(List.of("*")); // Permitir todos los headers
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Disposition")); // Exponer los headers que sean necesarios
+        configuration.setAllowCredentials(true); // Permitir el envío de credenciales como cookies y tokens
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 
 
 
